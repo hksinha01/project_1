@@ -63,8 +63,8 @@ const loginUser = async function (req, res) {
 
           let token = jwt.sign({
                userId: user._id.toString(),
-               iat :Math.floor(Date.now()/1000),
-               exp: Math.floor(Date.now/1000) + 60 * 3600,
+               // iat :Math.floor(Date.now()/1000),
+               // exp: Math.floor(Date.now/1000) + 60 * 3600,
                batch: "thorium",
           }, "Project_1")
           res.setHeader("x-api-key", token);
@@ -190,7 +190,7 @@ const deleteByQuery = async function (request, response) {
                });
           }
 
-          const dataRes = await BlogModel.findOneAndUpdate(data, { isDeleted: true });
+          const dataRes = await BlogModel.findOneAndUpdate(data, { isDeleted: true },{new : true});
           return response.status(200).send({status: true,data: dataRes});
      } catch (error) {
           console.log("this is the error:", error.message)
