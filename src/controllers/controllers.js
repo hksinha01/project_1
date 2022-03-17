@@ -171,7 +171,7 @@ const deleteBlogs = async function (req, res) {
           return res.status(404).send({ status: false, msg: "No such blog exists" });
                 
      }
-          
+          blogInfo.deletedAt = Date.now;
           let deleteBlogs = await BlogModel.findOneAndUpdate({ _id: blogId }, { $set: { isDeleted: true } }, { new: true });
           res.status(200).send({ status: true, data: deleteBlogs });
 
@@ -191,7 +191,7 @@ const deleteByQuery = async function (request, response) {
           if (!data)
                return res.status(400).send({ status: false, msg: "Please Send Some Data" })
 
-          const fetchData = await BlogModel.findOne({data,isDeleted:false});
+          const fetchData = await BlogModel.findOne({data});
           if (!fetchData) {
                return response.status(404).send({
                     status: false,
@@ -204,7 +204,7 @@ const deleteByQuery = async function (request, response) {
      return res.status(404).send({ status: false, msg: "No such blog exists" });
            
 }
-
+          //blogInfo.deletedAt = Date.now;
           const dataRes = await BlogModel.findOneAndUpdate(data, { isDeleted: true },{new : true});
           return response.status(200).send({status: true,data: dataRes});
      } catch (error) {

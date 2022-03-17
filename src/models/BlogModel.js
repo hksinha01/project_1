@@ -29,9 +29,21 @@ const blogsmodel = new mongoose.Schema( {
         type:Boolean,
          default: false 
         },
+    deletedAt :{
+        type:Date,
+        default : Date.now()
+       
+    },
     isPublished: {
         type:Boolean,
-         default: false }
+         default: false 
+    },
+    publishedAt:{
+        type:Date,
+        default : Date.now()
+    }
+   
+    
 
 }, { timestamps: true });   
    
