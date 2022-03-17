@@ -1,7 +1,8 @@
 const AuthorModel = require("../models/AuthorModel")
 const BlogModel = require("../models/BlogModel")
 const validator = require("email-validator");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const res = require("express/lib/response");
 
 
 const createAuthor = async function (req, res) {
@@ -63,8 +64,6 @@ const loginUser = async function (req, res) {
 
           let token = jwt.sign({
                userId: user._id.toString(),
-               // iat :Math.floor(Date.now()/1000),
-               // exp: Math.floor(Date.now/1000) + 60 * 3600,
                batch: "thorium",
           }, "Project_1")
           res.setHeader("x-api-key", token);
@@ -136,10 +135,12 @@ const updateBlog = async function (request, response) {
           if (Object.entries(data).length === 0) {
                res.status(400).send({ status: false, msg: "Kindly pass some data " })
           }
-          const fetchData = await BlogModel.findOne({id,isDeleted:false});
+          const fetchData = await BlogModel.findOne({id});
           if (!fetchData) {
                return res.status(404).send({ status: false, msg: "No such blog exists" });
           }
+          if(fetchData.isDeleted)
+          return res.status(404).send({status:false,msg : "Data not found"})
           data.publishedAt = new Date();
           data.isPublished = true
           const dataRes = await BlogModel.findByIdAndUpdate(request.params.blogId, data, { new: true});
@@ -151,17 +152,25 @@ const updateBlog = async function (request, response) {
 
 }
 
+
+
 const deleteBlogs = async function (req, res) {
      try {
           let blogId = req.params.blogId;
           if (!blogId)
                return res.status(400).send({ status: false, msg: "Blog ID is not valid" })
 
-          let blogInfo = await BlogModel.findOne({blogId,isDeleted: false});
+          let blogInfo = await BlogModel.findOne({blogId});
+
 
           if (!blogInfo)
                return res.status(404).send({ status: false, msg: "No such blog exists" });
-
+                
+               if(blogInfo.isDeleted)
+     {
+          return res.status(404).send({ status: false, msg: "No such blog exists" });
+                
+     }
           
           let deleteBlogs = await BlogModel.findOneAndUpdate({ _id: blogId }, { $set: { isDeleted: true } }, { new: true });
           res.status(200).send({ status: true, data: deleteBlogs });
@@ -189,6 +198,12 @@ const deleteByQuery = async function (request, response) {
                     msg: 'Blog not found ! '
                });
           }
+          
+          if(fetchData.isDeleted)
+{
+     return res.status(404).send({ status: false, msg: "No such blog exists" });
+           
+}
 
           const dataRes = await BlogModel.findOneAndUpdate(data, { isDeleted: true },{new : true});
           return response.status(200).send({status: true,data: dataRes});

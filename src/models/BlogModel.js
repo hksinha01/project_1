@@ -23,6 +23,7 @@ const blogsmodel = new mongoose.Schema( {
     },
     subcategory: {
         type:[],
+        
     },
     isDeleted: { 
         type:Boolean,
