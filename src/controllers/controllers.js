@@ -135,12 +135,13 @@ const updateBlog = async function (request, response) {
           if (Object.entries(data).length === 0) {
                res.status(400).send({ status: false, msg: "Kindly pass some data " })
           }
-          const fetchData = await BlogModel.findOne({id});
+          const fetchData = await BlogModel.findById(id);
           if (!fetchData) {
                return res.status(404).send({ status: false, msg: "No such blog exists" });
           }
-          if(fetchData.isDeleted)
-          return res.status(404).send({status:false,msg : "Data not found"})
+          if (fetchData.isDeleted) {
+               return response.status(404).send({status: false,msg: 'Blog Not Found !'});
+          }
           data.publishedAt = new Date();
           data.isPublished = true
           const dataRes = await BlogModel.findByIdAndUpdate(request.params.blogId, data, { new: true});
@@ -171,7 +172,7 @@ const deleteBlogs = async function (req, res) {
           return res.status(404).send({ status: false, msg: "No such blog exists" });
                 
      }
-          blogInfo.deletedAt = Date.now;
+          blogInfo.deletedAt = Date.now();
           let deleteBlogs = await BlogModel.findOneAndUpdate({ _id: blogId }, { $set: { isDeleted: true } }, { new: true });
           res.status(200).send({ status: true, data: deleteBlogs });
 
@@ -204,7 +205,7 @@ const deleteByQuery = async function (request, response) {
      return res.status(404).send({ status: false, msg: "No such blog exists" });
            
 }
-          //blogInfo.deletedAt = Date.now;
+          blogInfo.deletedAt = Date.now();
           const dataRes = await BlogModel.findOneAndUpdate(data, { isDeleted: true },{new : true});
           return response.status(200).send({status: true,data: dataRes});
      } catch (error) {
