@@ -19,10 +19,10 @@ const blogsmodel = new mongoose.Schema( {
     },
     category: {
         type:[],
-         required:true,
+         required:true
     },
     subcategory: {
-        type:[],
+        type:[]
         
     },
     isDeleted: { 
